@@ -1,8 +1,8 @@
 const axios  =require("axios")
 
+const weatherdata = (lat,lon)=>{
 
-const lat = 21.17
-const lon = 72.83
+
 const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=1b274b6a8139a5eeae5571f298f7258e&units=metric`
 
 axios.get(url).then(result=>{
@@ -29,3 +29,7 @@ axios.get(url).then(result=>{
     
 })
 
+
+}
+
+module.exports={weatherdata}
