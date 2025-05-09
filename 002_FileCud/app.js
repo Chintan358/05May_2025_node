@@ -37,5 +37,16 @@ yargs.command({
     }
 })
 
+yargs.command({
+    command:"remove",
+    builder : {
+        name:{
+            type:String
+        }
+    },
+    handler : function(argv){
+        file.removedata(argv.name)
+    }
+})
 
 yargs.argv
