@@ -1,6 +1,6 @@
 const axios  =require("axios")
 
-const weatherdata = (lat,lon)=>{
+const weatherdata = (lat,lon,callback)=>{
 
 
 const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=1b274b6a8139a5eeae5571f298f7258e&units=metric`
@@ -13,19 +13,22 @@ axios.get(url).then(result=>{
     const pressure = data.pressure
     const  name = result.data.name
     
-    console.log(`
+
+    callback({temp,humidity,pressure,name})
+    // console.log(`
         
-        City : ${name}
-        Temp : ${temp}
-        Pressure : ${pressure}
-        Humidity : ${humidity}
+    //     City : ${name}
+    //     Temp : ${temp}
+    //     Pressure : ${pressure}
+    //     Humidity : ${humidity}
         
-        `);
+    //     `);
     
     
 
 }).catch(err=>{
-    console.log(err);
+    
+    callback(undefined,err)
     
 })
 
