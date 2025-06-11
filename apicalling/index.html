@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <script>
+
+        var allData;
+        $(document).ready(function() {
+
+            $("#upbtn").hide()
+            fetchBook()
+            fetchAuthors()
+            fetchPublisher()
+        });
+
+        const fetchBook = ()=>{
+           
+            fetch("https://node-project-may5.onrender.com/books").then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            }).then(data => {
+                  
+                allData  =data
+                    
+                 const bookList = document.getElementById("bookList");
+                 rows = "";
+                   data.map(ele=>{
+
+                    rows += `<tr>
+                        <td>${ele.name}</td>
+                        <td>${ele.price}</td>
+                        <td>${ele.qty}</td>
+                        <td>${ele.author.name}</td>
+                        <td>${ele.publisher.name}</td>
+                        <td><button class='btn btn-primary' onclick='getBookById("${ele._id}")'>Update</button></td>
+                        <td><button class='btn btn-danger' onclick='delteBook("${ele._id}")'>Delete</button></td>
+                    </tr>`;
+                        
+                }) 
+                bookList.innerHTML = rows;
+
+            }).catch(error => {
+                console.error("There has been a problem with your fetch operation:", error);
+            }
+            )
+
+
+        }
+
+        const fetchAuthors = ()=>{
+           
+           fetch("https://node-project-may5.onrender.com/authors").then(response => {
+               if (!response.ok) {
+                   throw new Error("Network response was not ok");
+               }
+               return response.json();
+           }).then(data => {
+                  
+                const authorList = document.getElementById("authorList");
+                options = "<option>---select authors---</option>";
+                  data.map(ele=>{
+
+                   options += `<option value=${ele._id}>
+                       ${ele.name}
+                   </option>`;
+                       
+               }) 
+              
+               authorList.innerHTML = options;
+
+           }).catch(error => {
+               console.error("There has been a problem with your fetch operation:", error);
+           }
+           )
+
+
+       }
+
+       const fetchPublisher = ()=>{
+           
+           fetch("https://node-project-may5.onrender.com/publishers").then(response => {
+               if (!response.ok) {
+                   throw new Error("Network response was not ok");
+               }
+               return response.json();
+           }).then(data => {
+                  
+                const publisherList = document.getElementById("publisherList");
+                options = "<option>---select publishers---</option>";
+                  data.map(ele=>{
+
+                   options += `<option value=${ele._id}>
+                       ${ele.name}
+                   </option>`;
+                       
+               }) 
+               publisherList.innerHTML = options;
+
+           }).catch(error => {
+               console.error("There has been a problem with your fetch operation:", error);
+           }
+           )
+
+
+       }
+
+       const addBook = ()=>{
+            const name = $("#name").val()
+            const price = $("#price").val()
+            const qty = $("#qty").val()
+            const author = $("#authorList").val()
+            const publisher = $("#publisherList").val()
+
+            //alert(name+" "+price+" "+qty+" "+author+" "+publisher)
+
+            const data = {
+                name: name,
+                price: price,
+                qty: qty,
+                author: author,
+                publisher: publisher
+            };
+
+           
+            
+
+            fetch("https://node-project-may5.onrender.com/books",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok " + response.statusText);
+                }
+                return response.json();
+            })
+            .then(result => {
+                alert("Success");
+                fetchBook()
+              
+                // Optionally alert or update UI here
+            })
+            .catch(error => {
+                
+                console.log(error)  
+                // Optionally alert error or update UI
+            });
+
+            $("#name").val("")
+            $("#price").val("")
+            $("#qty").val("")
+    }
+
+
+        const delteBook = (id)=>{
+
+            fetch(`https://node-project-may5.onrender.com/books/${id}`,{
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+               
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok " + response.statusText);
+                }
+                return response.json();
+            })
+            .then(result => {
+                alert("Success");
+                fetchBook()
+              
+                // Optionally alert or update UI here
+            })
+            .catch(error => {
+                
+                console.log(error)  
+                // Optionally alert error or update UI
+            });
+
+        }
+
+        const getBookById = (id)=>{
+            
+            const bookdata = allData.find(ele=>ele._id==id)
+            $("#bookid").val(bookdata._id)
+            $("#authorList").val(bookdata.author._id)
+            $("#publisherList").val(bookdata.publisher._id)
+            $("#name").val(bookdata.name)
+            $("#price").val(bookdata.price)
+            $("#qty").val(bookdata.qty)
+
+            $("#upbtn").show()
+            $("#smbtn").hide()
+        }
+    
+        const updateBook = ()=>{
+
+            const id = $("#bookid").val()
+            const name = $("#name").val()
+            const price = $("#price").val()
+            const qty = $("#qty").val()
+            const author = $("#authorList").val()
+            const publisher = $("#publisherList").val()
+
+            //alert(name+" "+price+" "+qty+" "+author+" "+publisher)
+
+            const data = {
+                name: name,
+                price: price,
+                qty: qty,
+                author: author,
+                publisher: publisher
+            };
+
+            
+            
+
+            fetch(`https://node-project-may5.onrender.com/books/${id}`,{
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok " + response.statusText);
+                }
+                return response.json();
+            })
+            .then(result => {
+                alert("Success");
+                fetchBook()
+              
+                // Optionally alert or update UI here
+            })
+            .catch(error => {
+                
+                console.log(error)  
+                // Optionally alert error or update UI
+            });
+
+            $("#bookid").val("")
+            $("#name").val("")
+            $("#price").val("")
+            $("#qty").val("")
+
+            $("#upbtn").hide()
+            $("#smbtn").show()
+    }
+
+        const addauthor = ()=>{
+
+            var aname = $("#aname").val()
+            var age = $("#age").val()
+            var gender = $('input[name="gender"]:checked').val();
+            
+            const data = {
+                name: aname,
+                age: age,
+                gender: gender,
+            };
+
+           
+            
+
+            fetch("https://node-project-may5.onrender.com/authors",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok " + response.statusText);
+                }
+                return response.json();
+            })
+            .then(result => {
+                alert("Success");
+                fetchAuthors()
+                location.reload()
+              
+                // Optionally alert or update UI here
+            })
+            .catch(error => {
+                
+                console.log(error)  
+                // Optionally alert error or update UI
+            });
+
+            $("#aname").val("")
+            $("#age").val("")
+            
+            
+            
+
+
+
+        }
+    
+    </script>
+   
+</head>
+<body>
+           
+        
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="text-center text-capitalize text-success	fw-bold	" >Add Book</h1>
+                            <input type="hidden" id="bookid">
+                                
+                              <div class="d-flex align-items-end gap-2 mb-3">
+                        
+                                <div class="flex-grow-1">
+                                 
+                                  <select class="form-select" id="authorList">
+                                    <option value="0">--- Select author ---</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <button type="button" class="btn btn-success mb-1" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    + Add
+                                  </button>
+                                </div>
+                              </div>
+
+                            <br>
+                            <select class="form-control" id="publisherList">
+                                <option value="0">---Select publisher---</option>
+                            </select>
+                           <br>
+                            <input type="text" id="name" class="form-control" placeholder="Title" required>
+                       <br>
+                            <input type="text" id="price" class="form-control" placeholder="Price" required>
+                            <br>
+                            <input type="text" id="qty" class="form-control" placeholder="Quantity" required>
+                            <br>
+                            <button  class="btn btn-primary fw-semibold text-uppercase fs-5 px-4 py-2 mx-auto d-block mt-4" id="smbtn" value="Add Book" onclick="addBook()">Add Book</button>
+                            <button  class="btn btn-primary" id="upbtn" value="Update Book" onclick="updateBook()">Update Book</button>
+
+                        <hr>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Author</th>
+                                    <th>Publisher</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookList">
+                                <!-- Book list will be populated here -->
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add Author</h5>
+                    
+                </div>
+                <div class="modal-body">
+
+                    <input type="text" id="aname" placeholder="Enter Authorname" class="form-control">
+                    <br>
+                    <input type="text" id="age" placeholder="Enter Age" class="form-control">
+                    <br>
+                    <label>Gender</label>
+                    <input type="radio" value="male" name="gender" checked > Male
+                    <input type="radio" value="female" name="gender"> Female
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" onclick="addauthor()">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+</body>
+</html>

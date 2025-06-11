@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Publisher = require('../model/publisher');
+
 // Create a new publisher
 router.post('/', async (req, res) => {
     try {
