@@ -17,6 +17,7 @@ mongoose.connect(DBURL).then(()=>{
 app.use("/authors",require("../router/authorrouter"))
 app.use("/publishers",require("../router/publisherrouter"))
 app.use("/books",require("../router/bookrouter"))
+app.use("/users",require("../router/userrouters"))
 
 
 app.listen(PORT,()=>{
