@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Publisher = require('../model/publisher');
+const auth = require("../middleware/auth")
 
 // Create a new publisher
-router.post('/', async (req, res) => {
+router.post('/',auth, async (req, res) => {
     try {
         const publisher = new Publisher(req.body);
         await publisher.save();
@@ -38,7 +39,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update a publisher by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth,async (req, res) => {
     
     try {
         const publisher = await Publisher.findByIdAndUpdate(req.params.id, req.body);
@@ -52,7 +53,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete a publisher by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth,async (req, res) => {
     try {
         const publisher = await Publisher.findByIdAndDelete(req.params.id);
         if (!publisher) {

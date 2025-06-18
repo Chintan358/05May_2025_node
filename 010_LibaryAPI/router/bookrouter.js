@@ -3,9 +3,10 @@ const router = express.Router();
 const Book = require('../model/books');
 const Author = require('../model/authors');
 const Publisher = require('../model/publisher');
+const auth = require("../middleware/auth")
 
 // Create a new book
-router.post('/', async (req, res) => {
+router.post('/',auth, async (req, res) => {
     try {
         // Check if author and publisher exist
 
@@ -42,7 +43,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update a book by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id',auth, async (req, res) => {
         try {
 
             const data = await Book.findByIdAndUpdate(req.params.id, req.body).populate('author publisher');
@@ -60,7 +61,7 @@ router.put('/:id', async (req, res) => {
 })
 
 // Delete a book by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',auth, async (req, res) => {
     try {
         const book = await Book.findByIdAndDelete(req.params.id);
         if (!book) {

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../model/users');
+const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -25,11 +27,8 @@ router.get('/:id', async (req, res) => {
 
 // Create a new user
 router.post('/', async (req, res) => {
-    
-    
-    const user = new User(req.body);
-
     try {
+        const user = new User(req.body);
         const savedUser = await user.save();
         res.status(201).json(savedUser);
     } catch (error) {
@@ -43,7 +42,6 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
 
     try {
-        
         const data = await User.findByIdAndUpdate(req.params.id, req.body)
         if (!data) return res.status(404).json({ message: 'User not found' });
         const updatedUser = await User.findById(req.params.id);
@@ -65,6 +63,44 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+router.post('/login', async (req, res) => {
+
+        const {email,password} =  req.body
+        try {
+            //authentication check
+            const user = await User.findOne({email:email}) // check email 
+            
+            
+            if(user){
+
+                 const isCheck = await bcrypt.compare(password,user.password) // check password
+                 if(isCheck)
+                 {
+                   
+                    const token = await jwt.sign({id:user._id},process.env.SKEY)
+  
+                    res.send("Your auth-token : "+token)
+                 
+                    
+
+                 }
+                 else
+                 {
+                    res.send("Invalid credentials")
+                 }
+
+            }
+            else
+            {
+                res.send("Invalid credentials")
+            }
+            
+        } catch (error) {
+            res.send("Invalid credentials")
+        }
+        
+})
 
 
 

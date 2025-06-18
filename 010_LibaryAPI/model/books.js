@@ -10,7 +10,7 @@ const bookSchema = new mongoose.Schema({
         },
         publisher: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Publ`isher' // Reference to Publisher model
+            ref: 'Publisher' // Reference to Publisher model
         },
         name : {
             type: String,

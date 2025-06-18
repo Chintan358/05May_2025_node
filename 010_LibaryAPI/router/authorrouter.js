@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const Author = require("../model/authors")
-
+const auth = require("../middleware/auth")
 
 router.get("/",async (req,resp)=>{
     try {
@@ -12,7 +12,9 @@ router.get("/",async (req,resp)=>{
     }
 })
 
-router.post("/",async(req,resp)=>{
+
+
+router.post("/",auth,async(req,resp)=>{
     try {
         const author = new Author(req.body)
         const createAuthor = await author.save()
@@ -34,7 +36,7 @@ router.get("/:id",async(req,resp)=>{
        }  
 })
 
-router.put("/:id",async(req,resp)=>{
+router.put("/:id",auth,async(req,resp)=>{
     try {
 
         const id = req.params.id
@@ -46,7 +48,7 @@ router.put("/:id",async(req,resp)=>{
        }  
 })
 
-router.delete("/:id",async(req,resp)=>{
+router.delete("/:id",auth,async(req,resp)=>{
     try {
 
         const id = req.params.id
