@@ -52,6 +52,8 @@ router.post("/login",async(req,resp)=>{
 
         const userdata = await User.findOne({"username":req.body.username})
 
+
+
         const isCheck =   await bcrypt.compare(req.body.password,userdata.password)
         if(!isCheck)
         {
@@ -59,10 +61,15 @@ router.post("/login",async(req,resp)=>{
         }
         else{
 
+            if(userdata.Tokens.length>=3)
+            {
+                return  resp.render("login",{"err":"Max user limit reached !!!"})
+            }
+
             const token =  await userdata.generateToken()
             resp.cookie("jwt",token)
            // resp.render("home",{"user":userdata.username})
-           resp.redirect("home")
+            resp.redirect("home")
             
         }
     } catch (error) {
@@ -82,9 +89,24 @@ router.get("/home",auth,(req,resp)=>{
 
 router.get("/logout",auth,async(req,resp)=>{
 
+    const ctoken = req.token
+    const user = req.user
+
+    user.Tokens =  user.Tokens.filter(ele=>ele.token!=ctoken)
+    user.save()
     resp.clearCookie("jwt")
     resp.render("login")
 })
+
+router.get("/logoutall",auth,async(req,resp)=>{
+
+   
+    const user = req.user
+    user.Tokens = []
+    user.save()
+    resp.render("login")
+})
+
 
 module.exports=router
 

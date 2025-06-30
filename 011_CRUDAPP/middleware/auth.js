@@ -10,8 +10,18 @@ const auth = async (req,resp,next)=>{
             {
                 
                 const user =  await User.findOne({_id:verified._id})
-                req.user = user
-                next()
+
+                const isToken =  user.Tokens.find(ele=>ele.token==token)
+                if(isToken==undefined)
+                {
+                    resp.render("login",{"err":"Pls login first !!!!"})
+                }
+                else
+                {
+                 req.user = user
+                 req.token = token
+                 next()
+                }
             }
             else{
                 resp.render("login",{"err":"Pls login first !!!!"})
