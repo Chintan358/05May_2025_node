@@ -61,7 +61,7 @@ app.get("/sms",(req,resp)=>{
   var req = unirest("GET", "https://www.fast2sms.com/dev/bulkV2");
   
   req.query({
-    "authorization": "",
+    "authorization": "     ",
     "message": "This is a test message",
     "language": "english",
     "route": "q",
