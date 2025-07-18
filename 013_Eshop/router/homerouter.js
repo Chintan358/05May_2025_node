@@ -34,8 +34,8 @@ router.get("/shop",(req,resp)=>{
     resp.render("shop")
 })
 
-router.get("/whishlist",(req,resp)=>{
-    resp.render("whishlist")
+router.get("/wishlist",(req,resp)=>{
+    resp.render("wishlist")
 })
 
 

@@ -4,6 +4,20 @@ require("dotenv").config()
 const path = require("path")
 const hbs  = require("hbs")
 const PORT = process.env.PORT
+const DBURL = process.env.DBURL
+const bodyParser = require('body-parser')
+const mongoose = require("mongoose")
+app.use(bodyParser.urlencoded())
+
+
+mongoose.connect(DBURL).then(()=>{
+    console.log("db connected");
+    
+}).catch(err=>{
+    console.log(err);
+    
+})
+
 
 const viewpath = path.join(__dirname,"../templates/views")
 const publicpath = path.join(__dirname,"../public")
@@ -17,6 +31,7 @@ hbs.registerPartials(partialpath)
 
 
 app.use("/",require("../router/homerouter"))
+app.use("/",require("../router/userrouter"))
 
 app.listen(PORT,()=>{
     console.log(`server is running on port ${PORT}`);
