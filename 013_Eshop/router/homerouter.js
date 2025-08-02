@@ -1,20 +1,22 @@
 const express = require("express")
 const router = express.Router()
-
+const auth = require("../auth/auth")
 
 router.get("/",(req,resp)=>{
-    resp.render("index")
+        
+    
+    resp.render("index")   
 })
 
-router.get("/accounts",(req,resp)=>{
+router.get("/accounts",auth,(req,resp)=>{
     resp.render("accounts")
 })
 
-router.get("/cart",(req,resp)=>{
+router.get("/cart",auth,(req,resp)=>{
     resp.render("cart")
 })
 
-router.get("/checkout",(req,resp)=>{
+router.get("/checkout",auth,(req,resp)=>{
     resp.render("checkout")
 })
 
@@ -34,8 +36,14 @@ router.get("/shop",(req,resp)=>{
     resp.render("shop")
 })
 
-router.get("/wishlist",(req,resp)=>{
+router.get("/wishlist",auth,(req,resp)=>{
     resp.render("wishlist")
+})
+
+router.get("/logout",auth,(req,resp)=>{
+
+    resp.clearCookie("jwt")
+    resp.redirect("/")
 })
 
 

@@ -110,6 +110,6 @@ const updateStudent = async ()=>{
 
 // addStudent()
 // addManyStudents()
-// viewallStudents()
+ viewallStudents()
 // querydData()
 // updateStudent()

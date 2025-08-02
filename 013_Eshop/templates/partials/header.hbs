@@ -26,9 +26,16 @@
         <li class="nav__item">
           <a href="compare" class="nav__link">Compare</a>
         </li>
+
+        {{#if isLoggedin}}
         <li class="nav__item">
           <a href="login_register" class="nav__link">Login</a>
         </li>
+        {{else}}
+        <li class="nav__item">
+          <a href="logout" class="nav__link">logout</a>
+        </li>
+        {{/if}}
       </ul>
       <div class="header__search">
         <input

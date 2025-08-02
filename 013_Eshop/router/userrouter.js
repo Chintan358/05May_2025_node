@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 const User = require("../model/users")
 const bcrypt  =require("bcryptjs")
-
+const jwt = require("jsonwebtoken")
 
 router.post("/userreg",async (req,resp)=>{
         try{
@@ -28,14 +28,17 @@ router.post("/userlogin",async(req,resp)=>{
             const isCheck =  await bcrypt.compare(password,user.password)
             if(isCheck)
             {
-                    resp.redirect("/")
+
+                const token = await jwt.sign({"id":user._id},process.env.SKEY)
+                resp.cookie("jwt",token)
+                resp.redirect("/")
             }
             else{
-                resp.render("login-register",{"err":"Invalid credentials"})
+                resp.render("login-register",{"msg":"Invalid credentials"})
             }
         }
         else{
-            resp.render("login-register",{"err":"Invalid credentials"})
+            resp.render("login-register",{"msg":"Invalid credentials"})
         }
 
 
@@ -44,5 +47,8 @@ router.post("/userlogin",async(req,resp)=>{
         
     }
 })
+
+
+
 
 module.exports=router
